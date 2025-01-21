@@ -1,8 +1,10 @@
 const express = require('express');
+const cors = require("cors");
 const bookingRouter = require('./routers/bookingRouter');
 const tableRouter = require('./routers/tablesRouter');
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 // Use routers
