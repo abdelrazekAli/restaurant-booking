@@ -93,17 +93,22 @@ exports.checkAvailability2 = async (req, res) => {
         // console.log("Full payload1:", data1.message.tool_calls);
         // console.log("Full payload2:", data2.message.tool_calls);
         // console.log('-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        console.log("1")
 
         // Check if the required fields exist
         if (!req.body.message || !req.body.message.tool_calls || req.body.message.tool_calls.length === 0) {
+            console.log("2")
             return res.status(400).json({ error: true, message: "Invalid request payload: tool_calls missing" });
         }
 
         // Extract the arguments from the first tool call
         const toolCall = req.body.message.tool_calls[0];
+        console.log("3")
 
         // Ensure toolCall.function.arguments is an object
         if (typeof toolCall.function.arguments !== 'object') {
+            console.log("4")
+
             return res.status(400).json({ error: true, message: "Invalid arguments format: expected an object" });
         }
 
@@ -112,6 +117,8 @@ exports.checkAvailability2 = async (req, res) => {
 
         // Validate the extracted data
         if (!party_size || !date || !time || !restaurant_id) {
+            console.log("5")
+
             return res.status(400).json({ error: true, message: "Missing required fields in arguments" });
         }
 
