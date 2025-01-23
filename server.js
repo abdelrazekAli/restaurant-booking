@@ -11,8 +11,8 @@ app.use(express.json());
 // Middleware to log request details
 app.use((req, res, next) => {
     console.log('--- New Request ---');
-    console.log('Method:', req.method);
-    console.log('URL:', req.url);
+    // console.log('Method:', req.method);
+    // console.log('URL:', req.url);
     // console.log('Body:', req.body);
     console.log('--- ------------- ---');
 
