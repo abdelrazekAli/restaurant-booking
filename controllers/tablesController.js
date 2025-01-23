@@ -80,45 +80,36 @@ exports.checkAvailability = async (req, res) => {
 
 exports.checkAvailability2 = async (req, res) => {
     try {
-        console.log("************body")
-        // console.log(req.body)
-        // console.log("************")
-        // console.log("************message")
-        // console.log(req.body.message)
-        // console.log("************")
-        // Log the full payload for debugging
-        // let data2 = JSON.stringify(req.body)
-        // console.log('-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-
-        // console.log("Full payload1:", data1.message.tool_calls);
-        // console.log("Full payload2:", data2.message.tool_calls);
-        // console.log('-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-        console.log("1")
+        console.log("1");
 
         // Check if the required fields exist
-        console.log(req.body.message)
+        console.log(req.body.message);
         if (!req.body.message) {
-            console.log("22")
-            return res.status(400).json({ error: true, message: "Invalid request payload: tool_calls missing" });
-        } if (!req.body.message.tool_call_list) {
-            console.log("23")
-            return res.status(400).json({ error: true, message: "Invalid request payload: tool_calls missing" });
-        } if (!req.body.message.tool_calls) {
-            console.log("24")
-            return res.status(400).json({ error: true, message: "Invalid request payload: tool_calls missing" });
-        } if (req.body.message.tool_calls.length === 0) {
-            console.log("25")
+            console.log("22");
+            return res.status(400).json({ error: true, message: "Invalid request payload: message missing" });
+        }
+
+        // Check for tool_call_list or tool_with_tool_call_list
+        if (!req.body.message.tool_call_list && !req.body.message.tool_with_tool_call_list) {
+            console.log("23");
+            return res.status(400).json({ error: true, message: "Invalid request payload: tool_call_list or tool_with_tool_call_list missing" });
+        }
+
+        // Use tool_call_list if available, otherwise use tool_with_tool_call_list
+        const toolCalls = req.body.message.tool_call_list || req.body.message.tool_with_tool_call_list;
+
+        if (toolCalls.length === 0) {
+            console.log("25");
             return res.status(400).json({ error: true, message: "Invalid request payload: tool_calls missing" });
         }
 
         // Extract the arguments from the first tool call
-        const toolCall = req.body.message.tool_calls[0];
-        console.log("3")
+        const toolCall = toolCalls[0];
+        console.log("3");
 
         // Ensure toolCall.function.arguments is an object
         if (typeof toolCall.function.arguments !== 'object') {
-            console.log("4")
-
+            console.log("4");
             return res.status(400).json({ error: true, message: "Invalid arguments format: expected an object" });
         }
 
@@ -127,8 +118,7 @@ exports.checkAvailability2 = async (req, res) => {
 
         // Validate the extracted data
         if (!party_size || !date || !time || !restaurant_id) {
-            console.log("5")
-
+            console.log("5");
             return res.status(400).json({ error: true, message: "Missing required fields in arguments" });
         }
 
