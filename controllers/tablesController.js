@@ -81,11 +81,11 @@ exports.checkAvailability = async (req, res) => {
 exports.checkAvailability2 = async (req, res) => {
     try {
         // Log the full payload for debugging
-        let data1 = JSON.parse(req.body)
+        // let data1 = JSON.parse(req.body)
         let data2 = JSON.stringify(req.body)
         console.log('-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
 
-        console.log("Full payload1:", data1.message.tool_calls);
+        // console.log("Full payload1:", data1.message.tool_calls);
         console.log("Full payload2:", data2.message.tool_calls);
         console.log('-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
 
