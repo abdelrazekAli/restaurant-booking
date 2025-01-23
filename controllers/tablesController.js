@@ -80,8 +80,11 @@ exports.checkAvailability = async (req, res) => {
 
 exports.checkAvailability2 = async (req, res) => {
     try {
+        console.log("************body")
+        console.log(req.body)
         console.log("************")
-        console.log(req.body.message.tool_calls)
+        console.log("************message")
+        console.log(req.body.message)
         console.log("************")
         // Log the full payload for debugging
         // let data2 = JSON.stringify(req.body)
