@@ -79,31 +79,33 @@ exports.checkAvailability = async (req, res) => {
 };
 
 exports.checkAvailability2 = async (req, res) => {
-
-
     try {
         // Log the full payload for debugging
         console.log("Full payload:", JSON.stringify(req.body, null, 2));
 
         // Check if the required fields exist
-        if (!req.body.message || !req.body.message.toolCalls || req.body.message.toolCalls.length === 0) {
-            return res.status(400).json({ error: true, message: "Invalid request payload: toolCalls missing" });
+        if (!req.body.message || !req.body.message.tool_calls || req.body.message.tool_calls.length === 0) {
+            return res.status(400).json({ error: true, message: "Invalid request payload: tool_calls missing" });
         }
 
         // Extract the arguments from the first tool call
-        const toolCall = req.body.message.toolCalls[0];
-        const arguments = JSON.parse(toolCall.function.arguments); // Parse the JSON string
+        const toolCall = req.body.message.tool_calls[0];
+
+        // Ensure toolCall.function.arguments is an object
+        if (typeof toolCall.function.arguments !== 'object') {
+            return res.status(400).json({ error: true, message: "Invalid arguments format: expected an object" });
+        }
 
         // Extract the required fields
-        const { partySize, date, time, restaurantId } = arguments;
+        const { party_size, date, time, restaurant_id } = toolCall.function.arguments;
 
         // Validate the extracted data
-        if (!partySize || !date || !time || !restaurantId) {
+        if (!party_size || !date || !time || !restaurant_id) {
             return res.status(400).json({ error: true, message: "Missing required fields in arguments" });
         }
 
         // Log the extracted data
-        console.log("Extracted data:", { partySize, date, time, restaurantId });
+        console.log("Extracted data:", { party_size, date, time, restaurant_id });
 
         // Get all tables for the restaurant
         const tables = await airtableBase('Tables')
@@ -118,16 +120,16 @@ exports.checkAvailability2 = async (req, res) => {
             }))
             .filter(table =>
                 table.status === 'Available' &&
-                partySize >= table.minimum_party &&
-                partySize <= table.maximum_party &&
-                partySize <= table.capacity
+                party_size >= table.minimum_party &&
+                party_size <= table.maximum_party &&
+                party_size <= table.capacity
             );
 
         // Apply seating preference if specified
         let matchingTables = suitableTables;
-        if (arguments.seatingPreference) {
+        if (toolCall.function.arguments.seatingPreference) {
             matchingTables = suitableTables.filter(table =>
-                table.location === arguments.seatingPreference
+                table.location === toolCall.function.arguments.seatingPreference
             );
         }
 
@@ -142,7 +144,7 @@ exports.checkAvailability2 = async (req, res) => {
         }
 
         // Select the optimal table
-        const selectedTable = selectOptimalTable(availableTables, partySize, true);
+        const selectedTable = selectOptimalTable(availableTables, party_size, true);
 
         if (!selectedTable) {
             return res.json({
