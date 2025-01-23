@@ -76,19 +76,33 @@ exports.checkAvailability = async (req, res) => {
             error: error.message,
         });
     }
-}; exports.checkAvailability2 = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+};
 
-    const { party_size, date, time, seatingPreference, restaurantId } = req.body.message.tool_calls[0].function.arguments;
+exports.checkAvailability2 = async (req, res) => {
+
     try {
+        // Log the full payload for debugging
+        console.log("Full payload:", JSON.stringify(req.body, null, 2));
+
+        // Check if the required fields exist
+        if (!req.body.message || !req.body.message.toolCalls || req.body.message.toolCalls.length === 0) {
+            return res.status(400).json({ error: true, message: "Invalid request payload: toolCalls missing" });
+        }
+
+        // Extract the arguments from the first tool call
+        const { party_size, date, time, seatingPreference, restaurant_id } = req.body.message.toolCalls[0].function.arguments;
+
+        // Validate the extracted data
+        if (!party_size || !date || !time || !restaurant_id) {
+            return res.status(400).json({ error: true, message: "Missing required fields in arguments" });
+        }
+
+        // Log the extracted data
+        console.log("Extracted data:", { party_size, date, time, seatingPreference, restaurant_id });
+
         // Get all tables for the restaurant
         const tables = await airtableBase('Tables')
-            .select({
-
-            })
+            .select({})
             .firstPage();
 
         // Filter tables by primary criteria
@@ -133,6 +147,7 @@ exports.checkAvailability = async (req, res) => {
             });
         }
 
+        // Return success response
         res.json({
             success: true,
             availableTables: [{
@@ -142,6 +157,7 @@ exports.checkAvailability = async (req, res) => {
             message: 'Tables available for booking.',
         });
     } catch (error) {
+        console.error("Error in checkAvailability2:", error);
         res.status(500).json({
             success: false,
             message: 'Error checking table availability.',
