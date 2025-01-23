@@ -89,18 +89,20 @@ exports.checkAvailability2 = async (req, res) => {
             return res.status(400).json({ error: true, message: "Invalid request payload: message missing" });
         }
 
-        // Check for tool_call_list or tool_with_tool_call_list
-        if (!req.body.message.tool_call_list && !req.body.message.tool_with_tool_call_list) {
-            console.log("23");
-            return res.status(400).json({ error: true, message: "Invalid request payload: tool_call_list or tool_with_tool_call_list missing" });
-        }
+        // Check for toolCalls, toolCallList, or toolWithToolCallList
+        const toolCalls =
+            req.body.message.toolCalls ||
+            req.body.message.toolCallList ||
+            req.body.message.toolWithToolCallList;
 
-        // Use tool_call_list if available, otherwise use tool_with_tool_call_list
-        const toolCalls = req.body.message.tool_call_list || req.body.message.tool_with_tool_call_list;
+        if (!toolCalls) {
+            console.log("23");
+            return res.status(400).json({ error: true, message: "Invalid request payload: toolCalls, toolCallList, or toolWithToolCallList missing" });
+        }
 
         if (toolCalls.length === 0) {
             console.log("25");
-            return res.status(400).json({ error: true, message: "Invalid request payload: tool_calls missing" });
+            return res.status(400).json({ error: true, message: "Invalid request payload: toolCalls is empty" });
         }
 
         // Extract the arguments from the first tool call
