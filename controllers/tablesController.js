@@ -80,14 +80,16 @@ exports.checkAvailability = async (req, res) => {
 
 exports.checkAvailability2 = async (req, res) => {
     try {
+        console.log("************")
+        console.log(req.body.message.tool_calls)
+        console.log("************")
         // Log the full payload for debugging
-        // let data1 = JSON.parse(req.body)
-        let data2 = JSON.stringify(req.body)
-        console.log('-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        // let data2 = JSON.stringify(req.body)
+        // console.log('-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
 
         // console.log("Full payload1:", data1.message.tool_calls);
-        console.log("Full payload2:", data2.message.tool_calls);
-        console.log('-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        // console.log("Full payload2:", data2.message.tool_calls);
+        // console.log('-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
 
         // Check if the required fields exist
         if (!req.body.message || !req.body.message.tool_calls || req.body.message.tool_calls.length === 0) {
