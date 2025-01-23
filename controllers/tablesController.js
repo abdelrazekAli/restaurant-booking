@@ -119,7 +119,7 @@ exports.checkAvailability2 = async (req, res) => {
         const { party_size, date, time, restaurant_id } = toolCall.function.arguments;
 
         // Validate the extracted data
-        if (!party_size || !date || !time || !restaurant_id) {
+        if (!party_size || !date || !time) {
             console.log("5");
             return res.status(400).json({ error: true, message: "Missing required fields in arguments" });
         }
