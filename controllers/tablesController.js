@@ -82,8 +82,7 @@ exports.checkAvailability = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { partySize, date, time, seatingPreference, restaurantId } = req.body.message.tool_calls[0].function.arguments;
-
+    const { party_size, date, time, seatingPreference, restaurantId } = req.body.message.tool_calls[0].function.arguments;
     try {
         // Get all tables for the restaurant
         const tables = await airtableBase('Tables')
@@ -100,9 +99,9 @@ exports.checkAvailability = async (req, res) => {
             }))
             .filter(table =>
                 table.status === 'Available' &&
-                partySize >= table.minimum_party &&
-                partySize <= table.maximum_party &&
-                partySize <= table.capacity
+                party_size >= table.minimum_party &&
+                party_size <= table.maximum_party &&
+                party_size <= table.capacity
             );
 
         // Apply seating preference if specified
@@ -124,7 +123,7 @@ exports.checkAvailability = async (req, res) => {
         }
 
         // Select the optimal table
-        const selectedTable = selectOptimalTable(availableTables, partySize, true);
+        const selectedTable = selectOptimalTable(availableTables, party_size, true);
 
         if (!selectedTable) {
             return res.json({
