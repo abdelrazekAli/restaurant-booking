@@ -115,7 +115,6 @@ exports.checkAvailability2 = async (req, res) => {
             console.log("5");
             return res.status(400).json({ error: true, message: "Missing required fields in arguments" });
         }
-
         // Log the extracted data
         console.log("Extracted data:", { partySize, date, time });
 
@@ -132,9 +131,9 @@ exports.checkAvailability2 = async (req, res) => {
             }))
             .filter(table =>
                 table.status === 'Available' &&
-                party_size >= table.minimum_party &&
-                party_size <= table.maximum_party &&
-                party_size <= table.capacity
+                partySize >= table.minimum_party &&
+                partySize <= table.maximum_party &&
+                partySize <= table.capacity
             );
 
         // Apply seating preference if specified
@@ -156,7 +155,7 @@ exports.checkAvailability2 = async (req, res) => {
         }
 
         // Select the optimal table
-        const selectedTable = selectOptimalTable(availableTables, party_size, true);
+        const selectedTable = selectOptimalTable(availableTables, partySize, true);
 
         if (!selectedTable) {
             return res.json({
