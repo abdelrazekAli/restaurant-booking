@@ -80,6 +80,7 @@ exports.checkAvailability = async (req, res) => {
 
 exports.checkAvailability2 = async (req, res) => {
 
+
     try {
         // Log the full payload for debugging
         console.log("Full payload:", JSON.stringify(req.body, null, 2));
@@ -90,15 +91,19 @@ exports.checkAvailability2 = async (req, res) => {
         }
 
         // Extract the arguments from the first tool call
-        const { party_size, date, time, seatingPreference, restaurant_id } = req.body.message.toolCalls[0].function.arguments;
+        const toolCall = req.body.message.toolCalls[0];
+        const arguments = JSON.parse(toolCall.function.arguments); // Parse the JSON string
+
+        // Extract the required fields
+        const { partySize, date, time, restaurantId } = arguments;
 
         // Validate the extracted data
-        if (!party_size || !date || !time || !restaurant_id) {
+        if (!partySize || !date || !time || !restaurantId) {
             return res.status(400).json({ error: true, message: "Missing required fields in arguments" });
         }
 
         // Log the extracted data
-        console.log("Extracted data:", { party_size, date, time, seatingPreference, restaurant_id });
+        console.log("Extracted data:", { partySize, date, time, restaurantId });
 
         // Get all tables for the restaurant
         const tables = await airtableBase('Tables')
@@ -113,16 +118,16 @@ exports.checkAvailability2 = async (req, res) => {
             }))
             .filter(table =>
                 table.status === 'Available' &&
-                party_size >= table.minimum_party &&
-                party_size <= table.maximum_party &&
-                party_size <= table.capacity
+                partySize >= table.minimum_party &&
+                partySize <= table.maximum_party &&
+                partySize <= table.capacity
             );
 
         // Apply seating preference if specified
         let matchingTables = suitableTables;
-        if (seatingPreference) {
+        if (arguments.seatingPreference) {
             matchingTables = suitableTables.filter(table =>
-                table.location === seatingPreference
+                table.location === arguments.seatingPreference
             );
         }
 
@@ -137,7 +142,7 @@ exports.checkAvailability2 = async (req, res) => {
         }
 
         // Select the optimal table
-        const selectedTable = selectOptimalTable(availableTables, party_size, true);
+        const selectedTable = selectOptimalTable(availableTables, partySize, true);
 
         if (!selectedTable) {
             return res.json({

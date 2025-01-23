@@ -13,11 +13,11 @@ app.use((req, res, next) => {
     console.log('--- New Request ---');
     console.log('Method:', req.method);
     console.log('URL:', req.url);
-    console.log('Headers:', req.headers);
+    // console.log('Headers:', req.headers);
 
     // Log the body (if available)
     if (req.body && Object.keys(req.body).length > 0) {
-        console.log('Body:', req.body);
+        // console.log('Body:', req.body);
     } else {
         console.log('Body: No body data');
     }
