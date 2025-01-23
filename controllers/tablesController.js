@@ -116,7 +116,7 @@ exports.checkAvailability2 = async (req, res) => {
         }
 
         // Extract the required fields
-        const { party_size, date, time, restaurant_id } = toolCall.function.arguments;
+        const { party_size, date, time } = toolCall.function.arguments;
 
         // Validate the extracted data
         if (!party_size || !date || !time) {
@@ -125,7 +125,7 @@ exports.checkAvailability2 = async (req, res) => {
         }
 
         // Log the extracted data
-        console.log("Extracted data:", { party_size, date, time, restaurant_id });
+        console.log("Extracted data:", { party_size, date, time });
 
         // Get all tables for the restaurant
         const tables = await airtableBase('Tables')
