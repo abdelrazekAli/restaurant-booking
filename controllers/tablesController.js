@@ -96,8 +96,15 @@ exports.checkAvailability2 = async (req, res) => {
         console.log("1")
 
         // Check if the required fields exist
+        console.log(req.body.message)
+        console.log("firstfirstfirstfirstfirstfirstfirstfirstfirstfirstfirstfirst")
+        let parsed = JSON.parse(req.body.message)
+        console.log(parsed)
         if (!req.body.message) {
             console.log("22")
+            return res.status(400).json({ error: true, message: "Invalid request payload: tool_calls missing" });
+        } if (!req.body.message.tool_call_list) {
+            console.log("23")
             return res.status(400).json({ error: true, message: "Invalid request payload: tool_calls missing" });
         } if (!req.body.message.tool_calls) {
             console.log("23")
