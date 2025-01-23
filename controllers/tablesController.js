@@ -80,11 +80,8 @@ exports.checkAvailability = async (req, res) => {
 
 exports.checkAvailability2 = async (req, res) => {
     try {
-        console.log("1");
-
         // Check if the required fields exist
         if (!req.body.message) {
-            console.log("22");
             return res.status(400).json({ error: true, message: "Invalid request payload: message missing" });
         }
 
@@ -95,36 +92,32 @@ exports.checkAvailability2 = async (req, res) => {
             req.body.message.toolWithToolCallList;
 
         if (!toolCalls) {
-            console.log("23");
             return res.status(400).json({ error: true, message: "Invalid request payload: toolCalls, toolCallList, or toolWithToolCallList missing" });
         }
 
         if (toolCalls.length === 0) {
-            console.log("25");
             return res.status(400).json({ error: true, message: "Invalid request payload: toolCalls is empty" });
         }
 
         // Extract the arguments from the first tool call
         const toolCall = toolCalls[0];
-        console.log("3");
 
         // Ensure toolCall.function.arguments is an object
         if (typeof toolCall.function.arguments !== 'object') {
-            console.log("4");
             return res.status(400).json({ error: true, message: "Invalid arguments format: expected an object" });
         }
         console.log(toolCall)
         // Extract the required fields
-        const { party_size, date, time } = toolCall.function.arguments;
+        const { partySize, date, time } = toolCall.function.arguments;
 
         // Validate the extracted data
-        if (!party_size || !date || !time) {
+        if (!partySize || !date || !time) {
             console.log("5");
             return res.status(400).json({ error: true, message: "Missing required fields in arguments" });
         }
 
         // Log the extracted data
-        console.log("Extracted data:", { party_size, date, time });
+        console.log("Extracted data:", { partySize, date, time });
 
         // Get all tables for the restaurant
         const tables = await airtableBase('Tables')
