@@ -83,7 +83,6 @@ exports.checkAvailability2 = async (req, res) => {
         console.log("1");
 
         // Check if the required fields exist
-        console.log(req.body.message);
         if (!req.body.message) {
             console.log("22");
             return res.status(400).json({ error: true, message: "Invalid request payload: message missing" });
@@ -114,7 +113,7 @@ exports.checkAvailability2 = async (req, res) => {
             console.log("4");
             return res.status(400).json({ error: true, message: "Invalid arguments format: expected an object" });
         }
-
+        console.log(toolCall)
         // Extract the required fields
         const { party_size, date, time } = toolCall.function.arguments;
 
